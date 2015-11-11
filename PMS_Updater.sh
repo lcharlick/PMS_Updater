@@ -8,6 +8,8 @@ LOGFILE="PMS_Updater.log"
 PMSPARENTPATH="/usr/pbi/plexmediaserver-amd64/share"
 PMSLIVEFOLDER="plexmediaserver"
 PMSBAKFOLDER="plexmediaserver.bak"
+PMSPLUGINDIR=$PMSPARENTPATH/$PMSLIVEFOLDER/Resources/Plug-ins
+BUNDLEDIR=/media/bundles
 PMSPATTERN="PlexMediaServer-[0-9]*.[0-9]*.[0-9]*.[0-9]*.[0-9]*-[0-9,a-f]*-freebsd-amd64.tar.bz2"
 CERTFILE="/usr/local/share/certs/ca-root-nss.crt"
 AUTOUPDATE=0
@@ -196,6 +198,13 @@ applyUpdate()
     } fi
     ln -s $PMSPARENTPATH/$PMSLIVEFOLDER/Plex\ Media\ Server $PMSPARENTPATH/$PMSLIVEFOLDER/Plex_Media_Server 2>&1 | LogMsg           
     ln -s $PMSPARENTPATH/$PMSLIVEFOLDER/libpython2.7.so.1 $PMSPARENTPATH/$PMSLIVEFOLDER/libpython2.7.so 2>&1 | LogMsg
+
+    echo Linking modified bundles .....| LogMsg -n
+    # TODO: auto detect bundle names
+    rm -rf "${PMSPLUGINDIR}"*/LastFM.bundle 2>&1 | LogMsg
+    ln -s $BUNDLEDIR/LastFM.bundle "${PMSPLUGINDIR}"*/ 2>&1 | LogMsg
+    echo Done. | LogMsg -f
+
     echo Starting Plex Media Server .....| LogMsg -n
     service plexmediaserver start
     echo Done. | LogMsg -f
